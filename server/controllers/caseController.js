@@ -124,19 +124,30 @@ exports.updateCaseStatus = async (req, res, next) => {
   }
 };
 
+const ALLOWED_UPDATE_FIELDS = [
+  'leadTemperature', 'counsellingStatus', 'departmentRecommendation',
+  'eligibilityDetails', 'preferredCourse', 'alternateCourse', 'budgetConcern',
+  'scholarshipDiscussion', 'hostelRequired', 'transportRequired', 'sourceQuality',
+  'nextFollowUpDate', 'nextFollowUpTime', 'exitTime', 'priority',
+  'examinerName', 'institutionName', 'subjectName', 'practicalDate',
+  'eventTopic', 'eventSchedule', 'eventVenue', 'eventRequirements',
+  'vendorCompany', 'contactPerson', 'materialPurpose',
+];
+
 exports.updateCaseFields = async (req, res, next) => {
   try {
     const caseData = await Case.findById(req.params.id);
     if (!caseData) return res.status(404).json({ message: 'Case not found' });
-    const updates = req.body;
-    const blockedUpdates = [];
-    for (const key of Object.keys(updates)) {
-      if (caseData.lockedAfterSubmit && LOCKED_FIELDS.includes(key)) {
-        blockedUpdates.push(key);
+    const updates = {};
+    for (const key of Object.keys(req.body)) {
+      if (ALLOWED_UPDATE_FIELDS.includes(key)) {
+        updates[key] = req.body[key];
+      } else if (caseData.lockedAfterSubmit && LOCKED_FIELDS.includes(key)) {
+        return res.status(403).json({ message: `Cannot edit locked field: ${key}. Use correction request.`, blockedFields: [key] });
       }
     }
-    if (blockedUpdates.length > 0) {
-      return res.status(403).json({ message: `Cannot edit locked fields: ${blockedUpdates.join(', ')}. Use correction request.`, blockedFields: blockedUpdates });
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No valid fields to update' });
     }
     const prev = {};
     for (const key of Object.keys(updates)) {

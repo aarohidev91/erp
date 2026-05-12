@@ -18,7 +18,7 @@ export default function AuditLogsPage() {
       if (startDate) params.startDate = startDate;
       if (endDate) params.endDate = endDate;
       const { data } = await api.get('/reports/audit-logs', { params });
-      setLogs(data.auditLogs || []); setTotal(data.total); setTotalPages(data.totalPages);
+      setLogs(data.logs || []); setTotal(data.total); setTotalPages(data.totalPages);
     } catch (_e) {} finally { setLoading(false); }
   };
 

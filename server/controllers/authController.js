@@ -5,6 +5,7 @@ const { generateAccessToken, generateRefreshToken, verifyRefreshToken } = requir
 exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ message: 'Username and password are required' });
     const user = await User.findOne({
       $or: [{ username: username.toLowerCase() }, { email: username.toLowerCase() }],
     }).populate('role').populate('department');

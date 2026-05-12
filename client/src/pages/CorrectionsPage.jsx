@@ -22,7 +22,7 @@ export default function CorrectionsPage() {
       const params = { page, limit: 20 };
       if (status) params.status = status;
       const { data } = await api.get('/correction-requests', { params });
-      setCorrections(data.corrections || []); setTotal(data.total); setTotalPages(data.totalPages);
+      setCorrections(data.correctionRequests || []); setTotal(data.total); setTotalPages(data.totalPages);
     } catch (_e) {} finally { setLoading(false); }
   };
 
