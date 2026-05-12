@@ -156,6 +156,7 @@ npm run preview      # Preview production build
 
 ```
 erp/
+├── .github/workflows/ci.yml  # GitHub Actions CI
 ├── server/
 │   ├── config/          # DB connection, permissions config
 │   ├── controllers/     # Route handlers
@@ -164,16 +165,84 @@ erp/
 │   ├── routes/          # Express routes
 │   ├── services/        # PDF generation service
 │   ├── utils/           # Token, notification, timeline helpers
-│   ├── tests/           # API tests
+│   ├── tests/           # API tests (51 tests)
+│   ├── uploads/         # Uploaded documents (auto-created)
+│   ├── receipts/        # Generated PDF receipts (auto-created)
 │   ├── index.js         # Server entry point
 │   └── seed.js          # Database seeder
 ├── client/
 │   ├── src/
 │   │   ├── components/  # Reusable UI components
 │   │   ├── context/     # Auth context
-│   │   ├── pages/       # All page components
+│   │   ├── pages/       # All page components (25+)
 │   │   ├── services/    # API client with interceptors
 │   │   └── App.jsx      # Routes and providers
 │   └── index.html
 └── README.md
 ```
+
+## Anti-Tampering & Security
+
+- **Immutable Records**: Case data is locked (`lockedAfterSubmit: true`) after creation. Original fields (name, mobile, email, etc.) cannot be modified directly.
+- **Correction Request Workflow**: To modify locked fields, staff must submit a Correction Request which requires admin approval. Both old and new values are stored.
+- **Field Allowlist**: Only explicitly allowed fields (lead temperature, counselling status, etc.) can be updated via `PUT /cases/:id/fields`. Security fields (`isDeleted`, `lockedAfterSubmit`, `createdBy`) are always blocked.
+- **Append-Only Timeline**: Every action (creation, forwarding, notes, corrections, status changes) creates an immutable timeline event.
+- **Version History**: Note/remark edits store previous text, editor, and timestamp in `versionHistory` array.
+- **Soft Delete Only**: No hard deletes. Soft-deleted records remain in the database with `isDeleted: true` and `deletedAt` timestamp.
+- **Audit Logging**: Every significant action is logged with user, timestamp, IP, previous data, and new data.
+- **Password Security**: bcrypt hashing (configurable rounds), passwords excluded from all API responses via `toJSON()` transform.
+- **Mass-Assignment Protection**: Only whitelisted request body fields are applied to models.
+
+## Supported Visitor Purpose Categories
+
+1. Admission Enquiry
+2. Course Information
+3. Fee Enquiry
+4. Scholarship Enquiry
+5. Hostel Enquiry
+6. Placement Enquiry
+7. Practical Examiner Visit
+8. Workshop/Seminar Visit
+9. Guest Lecture
+10. Vendor/Supplier Visit
+11. Government/Official Visit
+12. Parent Visit
+13. Alumni Visit
+14. Complaint/Grievance
+15. Document Collection
+16. General Enquiry
+17. + Custom categories via Settings
+
+## Production Deployment
+
+```bash
+# Build frontend
+cd client && npm run build
+
+# Serve frontend from server (or nginx/CDN)
+# Set these in server/.env for production:
+NODE_ENV=production
+MONGODB_URI=mongodb+srv://...your-atlas-uri...
+JWT_ACCESS_SECRET=<random-64-char-string>
+JWT_REFRESH_SECRET=<random-64-char-string>
+BCRYPT_ROUNDS=12
+CLIENT_URL=https://your-domain.com
+
+# Start server
+cd server && npm start
+```
+
+### Recommended Production Setup
+
+- **MongoDB Atlas** or self-hosted replica set with authentication
+- **Reverse proxy**: nginx or Caddy for TLS termination
+- **Process manager**: PM2 for Node.js (`pm2 start server/index.js`)
+- **PDF Storage**: Configure cloud storage (S3) for `receipts/` and `uploads/` directories in production
+- **Backups**: Enable MongoDB oplog-based backups or Atlas automated backups
+- Change all default passwords after first deployment
+
+## CI
+
+GitHub Actions CI runs on every push and PR:
+- **Backend job**: Install → seed database → start server → run 51 API tests
+- **Frontend job**: Install → build (verifies no TypeScript/import errors)

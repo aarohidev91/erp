@@ -117,7 +117,6 @@ const caseSchema = new mongoose.Schema({
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, { timestamps: true });
 
-caseSchema.index({ caseId: 1 });
 caseSchema.index({ mobile: 1 });
 caseSchema.index({ visitorName: 'text', studentName: 'text', parentName: 'text', email: 'text' });
 caseSchema.index({ currentStatus: 1, currentDepartment: 1 });

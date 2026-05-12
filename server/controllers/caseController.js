@@ -127,11 +127,13 @@ exports.updateCaseStatus = async (req, res, next) => {
 const ALLOWED_UPDATE_FIELDS = [
   'leadTemperature', 'counsellingStatus', 'departmentRecommendation',
   'eligibilityDetails', 'preferredCourse', 'alternateCourse', 'budgetConcern',
-  'scholarshipDiscussion', 'hostelRequired', 'transportRequired', 'sourceQuality',
-  'nextFollowUpDate', 'nextFollowUpTime', 'exitTime', 'priority',
-  'examinerName', 'institutionName', 'subjectName', 'practicalDate',
-  'eventTopic', 'eventSchedule', 'eventVenue', 'eventRequirements',
-  'vendorCompany', 'contactPerson', 'materialPurpose',
+  'scholarshipDiscussion', 'hostelRequired', 'transportRequired',
+  'exitTime', 'priority',
+  'examinerName', 'examinerInstitution', 'examinerSubject', 'examinerContact',
+  'concernedFaculty',
+  'guestSpeakerName', 'guestOrganization', 'eventTopic', 'eventSchedule',
+  'eventVenue', 'eventRequirements', 'honorariumDiscussion', 'responsibleCoordinator',
+  'vendorCompany', 'vendorContactPerson', 'vendorPurpose',
 ];
 
 exports.updateCaseFields = async (req, res, next) => {
@@ -171,9 +173,17 @@ exports.forwardCase = async (req, res, next) => {
     const fromDept = caseData.currentDepartment;
     const fromUser = caseData.currentAssignedUser;
 
-    await ForwardingHistory.create({ case: caseData._id, fromDepartment: fromDept, toDepartment, fromUser, toUser, reason, priority: priority || caseData.priority, expectedAction, notes, dueDate, forwardedBy: req.user._id });
+    let resolvedDept = toDepartment;
+    if (!resolvedDept && toUser) {
+      const User = require('../models/User');
+      const targetUser = await User.findById(toUser);
+      if (targetUser && targetUser.department) resolvedDept = targetUser.department;
+    }
+    if (!resolvedDept) resolvedDept = caseData.currentDepartment;
 
-    caseData.currentDepartment = toDepartment;
+    await ForwardingHistory.create({ case: caseData._id, fromDepartment: fromDept, toDepartment: resolvedDept, fromUser, toUser, reason, priority: priority || caseData.priority, expectedAction, notes, dueDate, forwardedBy: req.user._id });
+
+    caseData.currentDepartment = resolvedDept;
     if (toUser) caseData.currentAssignedUser = toUser;
     if (priority) caseData.priority = priority;
     caseData.currentStatus = newStatus || 'forwarded';

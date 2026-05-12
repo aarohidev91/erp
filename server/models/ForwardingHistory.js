@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const forwardingHistorySchema = new mongoose.Schema({
   case: { type: mongoose.Schema.Types.ObjectId, ref: 'Case', required: true, index: true },
   fromDepartment: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
-  toDepartment: { type: mongoose.Schema.Types.ObjectId, ref: 'Department', required: true },
+  toDepartment: { type: mongoose.Schema.Types.ObjectId, ref: 'Department' },
   fromUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   toUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   reason: { type: String, required: true, trim: true },
