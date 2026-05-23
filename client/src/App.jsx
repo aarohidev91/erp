@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import DashboardLayout from './components/layout/DashboardLayout';
+import RoleRoute from './components/common/RoleRoute';
 import LoginPage from './pages/auth/LoginPage';
 import ChangePasswordPage from './pages/auth/ChangePasswordPage';
 import DashboardPage from './pages/DashboardPage';
@@ -59,23 +60,30 @@ export default function App() {
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="cases" element={<CasesPage />} />
               <Route path="cases/:id" element={<CaseDetailPage />} />
-              <Route path="reception/new" element={<NewVisitorPage />} />
-              <Route path="reception/today" element={<TodayVisitorsPage />} />
-              <Route path="reception/my-cases" element={<MyCasesPage />} />
-              <Route path="counsellor/assigned" element={<AssignedEnquiriesPage />} />
-              <Route path="counsellor/follow-ups" element={<FollowUpsPage />} />
-              <Route path="department/cases" element={<DepartmentCasesPage />} />
-              <Route path="accounts/cases" element={<AccountsCasesPage />} />
-              <Route path="accounts/payments" element={<PaymentsPage />} />
-              <Route path="registrar/cases" element={<RegistrarCasesPage />} />
-              <Route path="users" element={<UserManagementPage />} />
-              <Route path="roles" element={<RoleManagementPage />} />
-              <Route path="departments" element={<DepartmentManagementPage />} />
-              <Route path="courses" element={<CourseManagementPage />} />
-              <Route path="corrections" element={<CorrectionsPage />} />
-              <Route path="reports" element={<ReportsPage />} />
-              <Route path="audit-logs" element={<AuditLogsPage />} />
-              <Route path="settings" element={<SettingsPage />} />
+              {/* Reception routes */}
+              <Route path="reception/new" element={<RoleRoute roles={['super_admin', 'admin', 'receptionist', 'senior_receptionist']}><NewVisitorPage /></RoleRoute>} />
+              <Route path="reception/today" element={<RoleRoute roles={['super_admin', 'admin', 'receptionist', 'senior_receptionist']}><TodayVisitorsPage /></RoleRoute>} />
+              <Route path="reception/my-cases" element={<RoleRoute roles={['super_admin', 'admin', 'receptionist', 'senior_receptionist']}><MyCasesPage /></RoleRoute>} />
+              {/* Counsellor routes */}
+              <Route path="counsellor/assigned" element={<RoleRoute roles={['super_admin', 'admin', 'counsellor', 'counselling_head', 'event_coordinator', 'placement_staff']}><AssignedEnquiriesPage /></RoleRoute>} />
+              <Route path="counsellor/follow-ups" element={<RoleRoute roles={['super_admin', 'admin', 'counsellor', 'counselling_head']}><FollowUpsPage /></RoleRoute>} />
+              {/* Department routes */}
+              <Route path="department/cases" element={<RoleRoute roles={['super_admin', 'admin', 'department_staff', 'hod']}><DepartmentCasesPage /></RoleRoute>} />
+              {/* Accounts routes */}
+              <Route path="accounts/cases" element={<RoleRoute roles={['super_admin', 'admin', 'accounts_staff', 'accounts_head']}><AccountsCasesPage /></RoleRoute>} />
+              <Route path="accounts/payments" element={<RoleRoute roles={['super_admin', 'admin', 'accounts_staff', 'accounts_head']}><PaymentsPage /></RoleRoute>} />
+              {/* Registrar routes */}
+              <Route path="registrar/cases" element={<RoleRoute roles={['super_admin', 'admin', 'registrar', 'registrar_staff']}><RegistrarCasesPage /></RoleRoute>} />
+              {/* Admin routes */}
+              <Route path="users" element={<RoleRoute roles={['super_admin', 'admin']}><UserManagementPage /></RoleRoute>} />
+              <Route path="roles" element={<RoleRoute roles={['super_admin', 'admin']}><RoleManagementPage /></RoleRoute>} />
+              <Route path="departments" element={<RoleRoute roles={['super_admin', 'admin']}><DepartmentManagementPage /></RoleRoute>} />
+              <Route path="courses" element={<RoleRoute roles={['super_admin', 'admin']}><CourseManagementPage /></RoleRoute>} />
+              {/* Shared routes with role restrictions */}
+              <Route path="corrections" element={<RoleRoute roles={['super_admin', 'admin', 'admission_head']}><CorrectionsPage /></RoleRoute>} />
+              <Route path="reports" element={<RoleRoute roles={['super_admin', 'admin', 'senior_receptionist', 'counselling_head', 'hod', 'accounts_head', 'registrar', 'admission_head', 'principal', 'auditor']}><ReportsPage /></RoleRoute>} />
+              <Route path="audit-logs" element={<RoleRoute roles={['super_admin', 'admin', 'admission_head', 'principal', 'auditor']}><AuditLogsPage /></RoleRoute>} />
+              <Route path="settings" element={<RoleRoute roles={['super_admin', 'admin']}><SettingsPage /></RoleRoute>} />
               <Route path="notifications" element={<NotificationsPage />} />
               <Route path="profile" element={<ProfilePage />} />
             </Route>
