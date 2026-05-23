@@ -204,7 +204,7 @@ exports.forwardCase = async (req, res, next) => {
 
 exports.returnCase = async (req, res, next) => {
   try {
-    const { toDepartment, toUser, reason, notes } = req.body;
+    const { toDepartment, toUser, reason, notes: _notes } = req.body;
     const caseData = await Case.findById(req.params.id);
     if (!caseData) return res.status(404).json({ message: 'Case not found' });
     const fromDept = caseData.currentDepartment;

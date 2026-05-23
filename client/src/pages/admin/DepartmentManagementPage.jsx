@@ -13,7 +13,7 @@ export default function DepartmentManagementPage() {
   const fetch = async () => {
     setLoading(true);
     try { const { data } = await api.get('/departments'); setDepartments(data.departments || []); }
-    catch (_e) {} finally { setLoading(false); }
+    catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { fetch(); }, []);

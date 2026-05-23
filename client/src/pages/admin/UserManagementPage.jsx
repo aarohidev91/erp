@@ -25,7 +25,7 @@ export default function UserManagementPage() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchUsers(); }, [page, search]);
+  useEffect(() => { fetchUsers(); }, [page, search]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     api.get('/roles').then(({ data }) => setRoles(data.roles || [])).catch(() => {});
     api.get('/departments').then(({ data }) => setDepartments(data.departments || [])).catch(() => {});
@@ -61,7 +61,7 @@ export default function UserManagementPage() {
     try {
       const { data } = await api.post(`/users/${userId}/reset-password`);
       toast.success(`Password reset. New temp password: ${data.temporaryPassword}`);
-    } catch (error) {
+    } catch {
       toast.error('Failed to reset password');
     }
   };
@@ -71,7 +71,7 @@ export default function UserManagementPage() {
       await api.put(`/users/${user._id}`, { isActive: !user.isActive });
       toast.success(user.isActive ? 'User disabled' : 'User enabled');
       fetchUsers();
-    } catch (error) {
+    } catch {
       toast.error('Failed to update user');
     }
   };

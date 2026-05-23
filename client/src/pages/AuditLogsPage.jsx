@@ -11,7 +11,7 @@ export default function AuditLogsPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const fetch = async () => {
+  const fetchLogs = async () => {
     setLoading(true);
     try {
       const params = { page, limit: 30 };
@@ -19,10 +19,10 @@ export default function AuditLogsPage() {
       if (endDate) params.endDate = endDate;
       const { data } = await api.get('/reports/audit-logs', { params });
       setLogs(data.logs || []); setTotal(data.total); setTotalPages(data.totalPages);
-    } catch (_e) {} finally { setLoading(false); }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, [page, startDate, endDate]);
+  useEffect(() => { fetchLogs(); }, [page, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const columns = [
     { key: 'action', label: 'Action' },

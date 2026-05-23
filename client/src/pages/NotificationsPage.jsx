@@ -12,7 +12,7 @@ export default function NotificationsPage() {
     try {
       const { data } = await api.get('/notifications', { params: { limit: 50 } });
       setNotifications(data.notifications || []);
-    } catch (_e) {} finally { setLoading(false); }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { fetch(); }, []);

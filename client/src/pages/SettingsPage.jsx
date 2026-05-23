@@ -20,7 +20,7 @@ export default function SettingsPage() {
       toast.success('Approved');
       const { data } = await api.get('/settings/custom-purposes');
       setCustomPurposes(data.categories || []);
-    } catch (_e) { toast.error('Failed'); }
+    } catch { toast.error('Failed'); }
   };
 
   if (loading) return <div className="flex items-center justify-center py-24"><div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;

@@ -14,7 +14,7 @@ export default function CourseManagementPage() {
   const fetch = async () => {
     setLoading(true);
     try { const { data } = await api.get('/courses'); setCourses(data.courses || []); }
-    catch (_e) {} finally { setLoading(false); }
+    catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => { fetch(); api.get('/departments').then(({ data }) => setDepartments(data.departments || [])).catch(() => {}); }, []);
