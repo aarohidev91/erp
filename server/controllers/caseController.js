@@ -204,12 +204,12 @@ exports.forwardCase = async (req, res, next) => {
 
 exports.returnCase = async (req, res, next) => {
   try {
-    const { toDepartment, toUser, reason, notes: _notes } = req.body;
+    const { toDepartment, toUser, reason, notes } = req.body;
     const caseData = await Case.findById(req.params.id);
     if (!caseData) return res.status(404).json({ message: 'Case not found' });
     const fromDept = caseData.currentDepartment;
 
-    await ForwardingHistory.create({ case: caseData._id, fromDepartment: fromDept, toDepartment, fromUser: caseData.currentAssignedUser, toUser, reason: `Returned: ${reason}`, forwardedBy: req.user._id });
+    await ForwardingHistory.create({ case: caseData._id, fromDepartment: fromDept, toDepartment, fromUser: caseData.currentAssignedUser, toUser, reason: `Returned: ${reason}`, notes, forwardedBy: req.user._id });
 
     caseData.currentDepartment = toDepartment;
     if (toUser) caseData.currentAssignedUser = toUser;
