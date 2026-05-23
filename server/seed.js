@@ -13,7 +13,29 @@ const seedData = async () => {
 
     const existingAdmin = await User.findOne({ username: 'admin' });
     if (existingAdmin) {
-      console.log('Seed data already exists. Skipping.');
+      // Update admin email/password from .env if they changed
+      const envEmail = process.env.DEFAULT_ADMIN_EMAIL;
+      const envPassword = process.env.DEFAULT_ADMIN_PASSWORD;
+      let updated = false;
+
+      if (envEmail && existingAdmin.email !== envEmail.toLowerCase()) {
+        existingAdmin.email = envEmail;
+        updated = true;
+      }
+      if (envPassword) {
+        const isSame = await existingAdmin.comparePassword(envPassword);
+        if (!isSame) {
+          existingAdmin.password = envPassword;
+          updated = true;
+        }
+      }
+
+      if (updated) {
+        await existingAdmin.save();
+        console.log('Admin credentials updated from .env');
+      } else {
+        console.log('Seed data already exists. Admin credentials unchanged.');
+      }
       process.exit(0);
     }
 
