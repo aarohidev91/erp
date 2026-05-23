@@ -23,8 +23,11 @@ const seedData = async () => {
         updated = true;
       }
       if (envPassword) {
-        existingAdmin.password = envPassword;
-        updated = true;
+        const isSame = await existingAdmin.comparePassword(envPassword);
+        if (!isSame) {
+          existingAdmin.password = envPassword;
+          updated = true;
+        }
       }
 
       if (updated) {
