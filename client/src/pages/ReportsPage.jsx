@@ -16,10 +16,10 @@ export default function ReportsPage() {
       if (endDate) params.endDate = endDate;
       const { data: result } = await api.get(`/reports/${reportType}`, { params });
       setData(result);
-    } catch (_e) { setData(null); } finally { setLoading(false); }
+    } catch { setData(null); } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetchReport(); }, [reportType, startDate, endDate]);
+  useEffect(() => { fetchReport(); }, [reportType, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>

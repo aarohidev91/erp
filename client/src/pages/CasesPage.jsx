@@ -46,7 +46,7 @@ export default function CasesPage() {
     }
   };
 
-  useEffect(() => { fetchCases(); }, [page, filters]);
+  useEffect(() => { fetchCases(); }, [page, filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const columns = [
     { key: 'caseId', label: 'Case ID', render: (row) => (

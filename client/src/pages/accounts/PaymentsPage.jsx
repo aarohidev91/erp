@@ -21,10 +21,10 @@ export default function PaymentsPage() {
       if (endDate) params.endDate = endDate;
       const { data } = await api.get('/accounts/payments', { params });
       setPayments(data.payments || []); setTotal(data.total); setTotalPages(data.totalPages); setTotalAmount(data.totalAmount || 0);
-    } catch (_e) {} finally { setLoading(false); }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, [page, startDate, endDate]);
+  useEffect(() => { fetch(); }, [page, startDate, endDate]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const columns = [
     { key: 'receiptNumber', label: 'Receipt #' },

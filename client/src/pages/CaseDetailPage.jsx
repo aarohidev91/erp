@@ -9,14 +9,14 @@ import toast from 'react-hot-toast';
 export default function CaseDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, hasPermission } = useAuth();
+  const { hasPermission } = useAuth();
   const [caseData, setCaseData] = useState(null);
   const [timeline, setTimeline] = useState([]);
   const [notes, setNotes] = useState([]);
   const [forwardingHistory, setForwardingHistory] = useState([]);
   const [correctionRequests, setCorrectionRequests] = useState([]);
   const [payments, setPayments] = useState([]);
-  const [feeStructures, setFeeStructures] = useState([]);
+  const [, setFeeStructures] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [checklist, setChecklist] = useState([]);
   const [receipts, setReceipts] = useState([]);
@@ -41,7 +41,7 @@ export default function CaseDetailPage() {
       setDocuments(data.documents || []);
       setChecklist(data.checklist || []);
       setReceipts(data.receipts || []);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load case');
       navigate('/cases');
     } finally {
@@ -53,7 +53,7 @@ export default function CaseDetailPage() {
     fetchCase();
     api.get('/departments').then(({ data }) => setDepartments(data.departments || [])).catch(() => {});
     api.get('/users?limit=100').then(({ data }) => setUsers(data.users || [])).catch(() => {});
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [forwardForm, setForwardForm] = useState({ toDepartment: '', toUser: '', reason: '', priority: 'medium', expectedAction: '', notes: '', dueDate: '', newStatus: 'forwarded' });
   const [noteForm, setNoteForm] = useState({ text: '', noteType: 'visible', followUpDate: '' });
@@ -104,7 +104,7 @@ export default function CaseDetailPage() {
       toast.success('PDF generated');
       if (data.receipt?.filePath) window.open(data.receipt.filePath, '_blank');
       fetchCase();
-    } catch (error) {
+    } catch {
       toast.error('Failed to generate PDF');
     }
   };
@@ -114,7 +114,7 @@ export default function CaseDetailPage() {
       await api.post(`/cases/${id}/exit`, { exitTime: new Date() });
       toast.success('Exit time recorded');
       fetchCase();
-    } catch (error) {
+    } catch {
       toast.error('Failed to mark exit');
     }
   };
@@ -125,7 +125,7 @@ export default function CaseDetailPage() {
       await api.post(`/cases/${id}/convert-admission`);
       toast.success('Converted to admission enquiry');
       fetchCase();
-    } catch (error) {
+    } catch {
       toast.error('Failed to convert');
     }
   };
@@ -137,7 +137,7 @@ export default function CaseDetailPage() {
       await api.post(`/cases/${id}/close`, { reason });
       toast.success('Case closed');
       fetchCase();
-    } catch (error) {
+    } catch {
       toast.error('Failed to close case');
     }
   };

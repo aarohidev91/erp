@@ -46,7 +46,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.refreshToken = async (req, res, next) => {
+exports.refreshToken = async (req, res, _next) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) return res.status(401).json({ message: 'Refresh token required' });

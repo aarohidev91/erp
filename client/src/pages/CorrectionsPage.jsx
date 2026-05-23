@@ -23,10 +23,10 @@ export default function CorrectionsPage() {
       if (status) params.status = status;
       const { data } = await api.get('/correction-requests', { params });
       setCorrections(data.correctionRequests || []); setTotal(data.total); setTotalPages(data.totalPages);
-    } catch (_e) {} finally { setLoading(false); }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
-  useEffect(() => { fetch(); }, [page, status]);
+  useEffect(() => { fetch(); }, [page, status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleReview = async (id, action) => {
     const reviewRemarks = prompt(`Remarks for ${action}:`);
@@ -35,7 +35,7 @@ export default function CorrectionsPage() {
       await api.put(`/correction-requests/${id}/review`, { status: action, reviewRemarks });
       toast.success(`Correction ${action}`);
       fetch();
-    } catch (error) { toast.error('Failed'); }
+    } catch { toast.error('Failed'); }
   };
 
   const columns = [

@@ -16,7 +16,7 @@ export default function RoleManagementPage() {
     try {
       const { data } = await api.get('/roles');
       setRoles(data.roles || []);
-    } catch (_e) {} finally { setLoading(false); }
+    } catch { /* ignore */ } finally { setLoading(false); }
   };
 
   useEffect(() => {

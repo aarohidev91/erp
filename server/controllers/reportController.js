@@ -4,7 +4,6 @@ const AuditLog = require('../models/AuditLog');
 const LoginLog = require('../models/LoginLog');
 const CorrectionRequest = require('../models/CorrectionRequest');
 const Note = require('../models/Note');
-const User = require('../models/User');
 
 const buildDateFilter = (startDate, endDate) => {
   const filter = {};
