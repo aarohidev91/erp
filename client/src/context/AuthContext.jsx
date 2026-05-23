@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    if (token && !user) {
+    if (token) {
       api.get('/auth/me')
         .then(({ data }) => {
           setUser(data.user);
@@ -33,6 +33,8 @@ export const AuthProvider = ({ children }) => {
         })
         .finally(() => setLoading(false));
     } else {
+      localStorage.removeItem('user');
+      setUser(null);
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
